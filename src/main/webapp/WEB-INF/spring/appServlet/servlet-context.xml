@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:p="http://www.springframework.org/schema/p"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xmlns:security="http://www.springframework.org/schema/security"
+             xsi:schemaLocation="http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
+
+    <!--启用@Contorller注解,同时启用Spring的类型转换,格式化,校验-->
+    <annotation-driven validator="validator"/>
+
+    <!--定义静态资源的映射位置-->
+    <resources location="/, classpath:/META-INF/web-resources/" mapping="/resources/**"/>
+
+    <!--视图解析器-->
+    <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <beans:property name="prefix" value="/WEB-INF/views/" />
+        <beans:property name="suffix" value=".jsp" />
+    </beans:bean>
+
+    <!--启用Spring Security方法级别的保护,并启用注解支持-->
+    <!--<security:global-method-security pre-post-annotations="enabled"/>-->
+
+    <!--使DispatcherServlet既可以映射到根上下文,又可以拦截到静态资源的请求-->
+    <default-servlet-handler/>
+
+    <context:component-scan base-package="com.demo" />
+
+    <!--<interceptors>-->
+        <!--拦截所有请求来改变主题-->
+        <!--<beans:bean class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"/>-->
+        <!--拦截所有到DispatcherServlet的请求,通过请求参数切换语言环境-->
+        <!--<beans:bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"-->
+                    <!--p:paramName="lang"/>-->
+    <!--</interceptors>-->
+
+    <!--主题化支持-->
+    <!--负责加载激活主题的资源包-->
+    <!--<beans:bean class="org.springframework.ui.context.support.ResourceBundleThemeSource" id="themeSource"/>-->
+    <!--为用户解析激活主题,并将主题储存在cookie中-->
+    <!--<beans:bean class="org.springframework.web.servlet.theme.CookieThemeResolver"-->
+                <!--id="themeResolver" p:cookieName="theme" p:defaultThemeName="standard"/>-->
+
+    <!--使用Tiles实现视图模板化-->
+    <!--<beans:bean class="org.springframework.web.servlet.view.UrlBasedViewResolver"
+                id="tilesViewResolver">
+        <beans:property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView"/>
+    </beans:bean>-->
+
+    <!--<beans:bean class="org.springframework.web.servlet.view.tiles3.TilesConfigurer" id="tilesConfigurer">
+        <beans:property name="definitions">
+            <beans:list>
+                <beans:value>/WEB-INF/layouts/layouts.xml</beans:value>
+                <beans:value>/WEB-INF/views/**/views.xml</beans:value>
+            </beans:list>
+        </beans:property>
+    </beans:bean>-->
+
+    <!--i18n支持并从MessageSource中获取信息-->
+    <beans:bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+                id="messageSource" p:basenames="WEB-INF/i18n/messages,WEB-INF/i18n/application"
+                p:fallbackToSystemLocale="false"/>
+
+    <!--<beans:bean class="org.springframework.web.servlet.i18n.CookieLocaleResolver"-->
+                <!--id="localeResolver" p:cookieName="locale"/>-->
+
+    <!--JSR-349支持的校验器-->
+    <beans:bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <!--指示JSR-349校验器从messageSourceBean中根据code查找消息-->
+        <beans:property name="validationMessageSource" ref="messageSource"/>
+    </beans:bean>
+
+    <!--文件上传支持-->
+    <beans:bean class="org.springframework.web.multipart.support.StandardServletMultipartResolver"
+                id="multipartResolver"/>
+</beans:beans>
